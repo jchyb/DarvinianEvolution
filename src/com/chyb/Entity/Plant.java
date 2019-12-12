@@ -1,4 +1,7 @@
-package com.chyb;
+package com.chyb.Entity;
+
+import com.chyb.utils.Vector2D;
+
 public class Plant {
     Vector2D position;
     public Plant(Vector2D position){
