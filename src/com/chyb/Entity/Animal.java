@@ -1,28 +1,76 @@
 package com.chyb.Entity;
 
+import com.chyb.WorldMap;
 import com.chyb.utils.Vector2D;
 
+import java.util.Comparator;
 import java.util.Random;
 
-public class Animal {
+public class Animal implements Comparable<Animal> {
 
-    static Random random = new Random();
-    public int[] genome;
-    Vector2D position;
+    private static Random random = new Random();
+    private final WorldMap wMap;
+    private int[] genome;
+    private Vector2D position;
     private int direction;
     private int stamina;
 
-    public Animal(Vector2D position) {
+    public Animal(Vector2D position, WorldMap wMap) {
         this.position = new Vector2D(position.x, position.y);
+        this.wMap = wMap;
         genome = new int[32];
         randomizeGenome();
     }
-    public Animal(Animal parent1, Animal parent2, Vector2D position){
+    public Animal(Vector2D position, Animal parent1, Animal parent2, WorldMap wMap){
         this.position = new Vector2D(position.x, position.y);
+        this.wMap = wMap;
         genome = new int[32];
         inheritGenome(parent1.getGenome(), parent2.getGenome());
     }
 
+
+    public void move(){
+        //TODO
+        direction = direction + genome[random.nextInt() % 32] % 8;
+
+        Vector2D target;
+        switch(direction){
+            case 0:
+                target = new Vector2D(0,1);
+                break;
+            case 1:
+                target = new Vector2D(1,1);
+                break;
+            case 2:
+                target = new Vector2D(1,0);
+                break;
+            case 3:
+                target = new Vector2D(1,-1);
+                break;
+            case 4:
+                target = new Vector2D(0,-1);
+                break;
+            case 5:
+                target = new Vector2D(-1,-1);
+                break;
+            case 6:
+                target = new Vector2D(-1,0);
+                break;
+            case 7:
+                target = new Vector2D(-1,1);
+                break;
+            default:
+                target= new Vector2D(2,2);
+        }
+
+        Vector2D oldPosition = position;
+        position = position.add(target);
+        position = position.mod(wMap.getSize());
+        wMap.moveAnimal(this, oldPosition, position);
+
+
+
+    }
     private void inheritGenome(int[] parentGenome1, int[] parentGenome2) {
         int partLeft = random.nextInt() % 29 + 1;
         int partRight = partLeft + random.nextInt() % (31 - partLeft) + 1;
@@ -63,5 +111,18 @@ public class Animal {
 
     private int[] getGenome() {
         return genome;
+    }
+
+    public int getEnergy() {
+        return stamina;
+    }
+
+    @Override
+    public int compareTo(Animal other) {
+        return this.getEnergy() - other.getEnergy();
+    }
+
+    public void addEnergy(int plantEnergy) {
+        stamina += plantEnergy;
     }
 }

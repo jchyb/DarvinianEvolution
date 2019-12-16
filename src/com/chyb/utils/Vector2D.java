@@ -27,6 +27,10 @@ public class Vector2D {
     public Vector2D subtract(Vector2D other){
         return new Vector2D(this.x-other.x,this.y-other.y);
     }
+    public Vector2D mod(Vector2D modVal){
+        //TODO change name
+        return new Vector2D((this.x % modVal.x + modVal.x) % modVal.x, (this.y % modVal.y + modVal.y) % modVal.y);
+    }
     public boolean equals(Object other){
         if(this==other)return true;
         else if(!(other instanceof Vector2D))return false;
@@ -43,4 +47,5 @@ public class Vector2D {
         hash += this.y * 13;
         return hash;
     }
+
 }
