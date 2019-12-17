@@ -1,4 +1,4 @@
-package main.java.com.chyb.utils;
+package com.chyb.utils;
 
 public enum MapDirection {
     N, NE, E, SE, S, SW, W, NW;

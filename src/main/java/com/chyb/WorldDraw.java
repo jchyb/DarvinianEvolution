@@ -1,7 +1,7 @@
-package main.java.com.chyb;
+package com.chyb;
 
-import main.java.com.chyb.Entity.Animal;
-import main.java.com.chyb.utils.Vector2D;
+import com.chyb.Entity.Animal;
+import com.chyb.utils.Vector2D;
 
 import javax.swing.*;
 import java.awt.*;

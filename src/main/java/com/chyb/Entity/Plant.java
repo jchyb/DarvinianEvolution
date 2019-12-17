@@ -1,5 +1,5 @@
-package main.java.com.chyb.Entity;
-import main.java.com.chyb.utils.Vector2D;
+package com.chyb.Entity;
+import com.chyb.utils.Vector2D;
 
 public class Plant {
     Vector2D position;

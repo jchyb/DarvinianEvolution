@@ -1,8 +1,8 @@
-package main.java.com.chyb;
+package com.chyb;
 
-import main.java.com.chyb.Entity.Animal;
-import main.java.com.chyb.Entity.Plant;
-import main.java.com.chyb.utils.Vector2D;
+import com.chyb.Entity.Animal;
+import com.chyb.Entity.Plant;
+import com.chyb.utils.Vector2D;
 
 import java.util.*;
 
@@ -31,7 +31,7 @@ public class WorldMap {
                 Vector2D newPosition = new Vector2D(random.nextInt()% width, random.nextInt() % height);
                 if(!animalMap.containsKey(newPosition)){
                     Animal animal = new Animal(newPosition,this,10);
-                    LinkedList<Animal> ll = new LinkedList<>();
+                    LinkedList<Animal> ll = new LinkedList<Animal>();
                     ll.add(animal);
                     animalMap.put(newPosition, ll);
                     animalList.add(animal);
@@ -96,7 +96,7 @@ public class WorldMap {
         animalMap.get(position).add(animal);
     }
     public void eatPlants(){
-        ArrayList<Vector2D> toRemove = new ArrayList<>();
+        ArrayList<Vector2D> toRemove = new ArrayList<Vector2D>();
         for(Vector2D plantPosition : plantMap.keySet()){
             if(!animalMap.containsKey(plantPosition) || animalMap.get(plantPosition).isEmpty()) continue;
             toRemove.add(plantPosition);

@@ -1,4 +1,4 @@
-package main.java.com.chyb.utils;
+package com.chyb.utils;
 
 public class Vector2D {
     public final int x,y;

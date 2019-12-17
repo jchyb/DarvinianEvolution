@@ -1,7 +1,7 @@
-package main.java.com.chyb.Entity;
+package com.chyb.Entity;
 
-import main.java.com.chyb.WorldMap;
-import main.java.com.chyb.utils.Vector2D;
+import com.chyb.WorldMap;
+import com.chyb.utils.Vector2D;
 
 import java.util.Random;
 
@@ -116,7 +116,6 @@ public class Animal implements Comparable<Animal> {
         return stamina;
     }
 
-    @Override
     public int compareTo(Animal other) {
         return this.getEnergy() - other.getEnergy();
     }

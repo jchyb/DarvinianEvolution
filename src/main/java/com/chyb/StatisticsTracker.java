@@ -1,4 +1,4 @@
-package main.java.com.chyb;
+package com.chyb;
 
 public class StatisticsTracker {
 
