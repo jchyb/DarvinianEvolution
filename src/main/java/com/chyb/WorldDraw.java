@@ -17,19 +17,18 @@ public class WorldDraw extends JPanel {
         super.paintComponent(g);
 
         g.setColor(Color.BLUE);
-        g.drawRect(0,0,wMap.getWidth()*10,wMap.getHeight()*10);
+        g.drawRect(0,0,wMap.getWidth()*5,wMap.getHeight()*5);
 
         g.setColor(Color.BLACK);
         ArrayList<Animal> animalList = wMap.getAnimalList();
         for(int i = 0; i<animalList.size(); i++){
-            g.fillRect(animalList.get(i).getPosition().x * 10,animalList.get(i).getPosition().y * 10,10,10);
+            g.fillOval(animalList.get(i).getPosition().x * 5,animalList.get(i).getPosition().y * 5,5,5);
         }
-
         g.setColor(Color.GREEN);
         for(int i = 0; i<wMap.getWidth();i++){
             for(int j = 0; j<wMap.getHeight();j++){
                 if(wMap.isOccupiedByPlant(new Vector2D(i,j))){
-                    g.drawRect(i*10,j*10,10,10);
+                    g.drawRect(i*5,j*5,5,5);
                 }
             }
         }
