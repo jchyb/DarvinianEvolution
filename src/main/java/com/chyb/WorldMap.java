@@ -1,7 +1,7 @@
 package com.chyb;
 
-import com.chyb.Entity.Animal;
-import com.chyb.Entity.Plant;
+import com.chyb.entities.Animal;
+import com.chyb.entities.Plant;
 import com.chyb.utils.Vector2D;
 
 import java.util.*;
@@ -9,6 +9,7 @@ import java.util.*;
 public class WorldMap {
 
     private final int startEnergy, moveEnergy, plantEnergy;
+    private final int jungleX, jungleY;
     private int width, height;
     private int jungleWidth, jungleHeight;
     private HashMap<Vector2D, LinkedList<Animal> > animalMap;
@@ -20,7 +21,9 @@ public class WorldMap {
         this.width = width;
         this.height = height;
         this.jungleWidth = jungleWidth;
+        jungleX = (width-jungleWidth)/2;
         this.jungleHeight = jungleHeight;
+        jungleY = (height-jungleHeight)/2;
         this.startEnergy = startEnergy;
         this.moveEnergy = moveEnergy;
         this.plantEnergy = plantEnergy;
@@ -50,25 +53,36 @@ public class WorldMap {
             int randomX=0, randomY=0;
             int missedAmount = 0;
 
-            //TODO REDO
-
+            //TODO REDO ?
             while(!foundSpot && missedAmount < width * height) {
-                randomX = random.nextInt() % (width - jungleWidth);
-                randomY = random.nextInt() % (height - jungleHeight);
-                if(randomX > (width-jungleWidth)/2) randomX += jungleWidth;
-                if(randomY > (height-jungleHeight)/2) randomY += jungleHeight;
-                Vector2D randomVector = new Vector2D(randomX, randomY);
+                int randomInt = random.nextInt(width*height - jungleWidth*jungleHeight);
+                Vector2D randomVector;
+
+                randomVector = new Vector2D(randomInt % width, randomInt / width);
+                randomInt -= width*(jungleY);
+
+                if(randomInt >= 0){
+                    int randX = randomInt % (width - jungleWidth);
+                    int randY = randomInt / (width - jungleWidth);
+                    if(randX >= jungleX) randX += jungleWidth;
+                    randomVector = new Vector2D(randX, jungleY + randY);
+                    randomInt -= (width - jungleWidth) *(jungleHeight);
+                }
+                if(randomInt>=0){
+                    randomVector = new Vector2D(randomInt % (width),jungleY + jungleHeight + randomInt / width);
+                }
                 foundSpot = !isOccupiedByAnimal(randomVector) && !isOccupiedByPlant(randomVector);
                 missedAmount++;
+                if(foundSpot) plantMap.put(randomVector.copy(), new Plant(randomVector.copy()));
             }
-            if(foundSpot) plantMap.put(new Vector2D(randomX, randomY), new Plant(new Vector2D(randomX,randomY)));
-            //TODO refactor test
+
+            //TODO refactor
             //jungleAdd
             foundSpot = false;
             missedAmount = 0;
             while(!foundSpot && missedAmount < jungleWidth*jungleHeight) {
-                randomX = random.nextInt(jungleWidth) + (width - jungleWidth)/2;
-                randomY = random.nextInt(jungleHeight) + (height - jungleHeight)/2;
+                randomX = random.nextInt(jungleWidth) + jungleX;
+                randomY = random.nextInt(jungleHeight) + jungleY;
                 Vector2D randomVector = new Vector2D(randomX, randomY);
                 foundSpot = !isOccupiedByAnimal(randomVector) && !isOccupiedByPlant(randomVector);
                 missedAmount++;
@@ -82,6 +96,11 @@ public class WorldMap {
     }
 
     private Animal addChild(Vector2D centralPosition, Animal parent1, Animal parent2){
+        if(parent2.getEnergy()<startEnergy/2) return null;
+        int childEnergy;
+        childEnergy = parent1.popQuarterEnergy();
+        childEnergy = parent2.popQuarterEnergy();
+
         ArrayList<Vector2D> openSpaces = new ArrayList<Vector2D>();
 
         for(int i=-1; i<=1; i++){
@@ -111,12 +130,15 @@ public class WorldMap {
                 if(bestEnergy < animal.getEnergy()){
                     bestAnimals.clear();
                     bestAnimals.add(animal);
+                    bestEnergy = animal.getEnergy();
                 } else if(bestEnergy == animal.getEnergy()){
                     bestAnimals.add(animal);
                 }
             }
-            for(Animal animal : bestAnimals){
-                animal.addEnergy((int) Main.plantEnergy / bestAnimals.size());
+            if(bestEnergy>0) {
+                for (Animal animal : bestAnimals) {
+                    animal.addEnergy((int) Main.plantEnergy / bestAnimals.size());
+                }
             }
         }
         for(Vector2D plantPosition : toRemove){
@@ -124,15 +146,14 @@ public class WorldMap {
         }
     }
     public void handleBirths(){
-        System.out.print("before"+animalList.size());
         ArrayList<Animal> animalsToAdd = new ArrayList<>();
         for(Vector2D animalPosition : animalMap.keySet()){
             LinkedList<Animal> animalLl = animalMap.get(animalPosition);
             if(animalLl.size()>1) {
                 Collections.sort(animalLl);
-                System.out.println("child");
                 Animal child = addChild(animalPosition, animalLl.get(0), animalLl.get(1));
                 if(child != null){
+                    System.out.println("child");
                     animalsToAdd.add(child);
                 }
             }
@@ -151,11 +172,8 @@ public class WorldMap {
         for(int i=0;i<animalList.size();i++){
             Animal animal = animalList.get(i);
             if(animal.getEnergy() <= 0){
-                //System.out.println("anima"+animal.getPosition().toString());
                 LinkedList<Animal> animalLL = animalMap.get(animal.getPosition());
-                //System.out.println("animalLL" + (animalLL == null));
                 animalLL.remove(animal);
-                //System.out.print("removed");
                 animalList.remove(i);
                 i--;
                 continue;
@@ -164,7 +182,7 @@ public class WorldMap {
         }
         eatPlants();
         handleBirths();
-        addPlants(5);
+        addPlants(1);
     }
 
     private boolean isOccupiedByAnimal(Vector2D position){
@@ -172,12 +190,10 @@ public class WorldMap {
         else return !animalMap.get(position).isEmpty();
     }
 
-    public void moveAnimal(Animal animal, Vector2D oldPosition, Vector2D newPosition) {
+    public void animalMoved(Animal animal, Vector2D oldPosition, Vector2D newPosition) {
         //remove from oldPosition
         LinkedList<Animal> animalLl = animalMap.get(oldPosition);
-        //System.out.println(animalLl.size() + " b");
         animalLl.remove(animal);
-        //System.out.println(animalLl.size() + "a");
 
         //add to newPosition
         if(animalMap.containsKey(newPosition)){
@@ -198,6 +214,7 @@ public class WorldMap {
     public int getWidth() {
         return width;
     }
+
     public int getHeight(){
         return height;
     }

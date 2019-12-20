@@ -1,35 +1,34 @@
 package com.chyb.utils;
 
 public enum MapDirection {
-    N, NE, E, SE, S, SW, W, NW;
-
-    public Vector2D toUnitVector() {
-        switch (this) {
-            case N:
-                return new Vector2D(0, 1);
-            case NE:
-                return new Vector2D(1, 1);
-            case E:
-                return new Vector2D(1, 0);
-            case SE:
-                return new Vector2D(1, -1);
-            case S:
-                return new Vector2D(0, -1);
-            case SW:
-                return new Vector2D(-1, -1);
-            case W:
-                return new Vector2D(-1, 0);
-            case NW:
-                return new Vector2D(-1, 1);
-        }
-        return null;
+    N(0, 1,0), NE(1,1,1), E(1,0,2), SE(1,-1,3),
+    S(0,-1,4), SW(-1,-1,5), W(-1,0,6), NW(-1,1,7);
+    private final int rotationValue;
+    public final Vector2D unitVector;
+    MapDirection(int x, int y, int rotationValue) {
+        this.unitVector = new Vector2D(x, y);
+        this.rotationValue = rotationValue;
     }
-
-    public MapDirection rotateViaGene(int gene){
-        //TODO
-        /*
-        int nextValue = ((int) this + gene) % 8;
-    */
+    public MapDirection rotateByValue(int gene){
+        int newValue = (rotationValue + gene) % 8;
+        switch(newValue){
+            case 0:
+                return N;
+            case 1:
+                return NE;
+            case 2:
+                return E;
+            case 3:
+                return SE;
+            case 4:
+                return S;
+            case 5:
+                return SW;
+            case 6:
+                return W;
+            case 7:
+                return NW;
+        }
         return null;
     }
 

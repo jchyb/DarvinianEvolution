@@ -1,4 +1,4 @@
-package com.chyb.Entity;
+package com.chyb.entities;
 import com.chyb.utils.Vector2D;
 
 public class Plant {
