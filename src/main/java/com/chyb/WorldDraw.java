@@ -17,31 +17,25 @@ public class WorldDraw extends JPanel {
     int blockHeight;
     WorldMap wMap;
     public WorldDraw(WorldMap wMap){
-        this.setPreferredSize(new DimensionUIResource(wMap.getWidth()*5 + 20,wMap.getHeight()*5 + 20));
+        this.setPreferredSize(new Dimension(wMap.getWidth()*5 + 20,wMap.getHeight()*5 + 20));
+        //this.setMinimumSize(new Dimension(wMap.getWidth(),wMap.getHeight()));
         this.wMap = wMap;
         this.blockHeight=100;
         this.blockWidth=100;
-        this.addComponentListener(new ComponentAdapter()
-        {
-
-            public void componentResized(ComponentEvent evt) {
-                Component c = (Component)evt.getSource();
-
-            }
-        });
     }
-    protected void paintComponent(Graphics g) {
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        g.setColor(Color.BLUE);
+        g.setColor(Color.BLACK);
         g.drawRect(10,10,wMap.getWidth()*5,wMap.getHeight()*5);
 
         g.setColor(Color.BLACK);
         ArrayList<Animal> animalList = wMap.getAnimalList();
         for(int i = 0; i<animalList.size(); i++){
-            g.setColor(Color.getHSBColor(0, 1,0.5f));
+            g.setColor(Color.getHSBColor(0, 1,0.3f));
             g.fillOval(animalList.get(i).getPosition().x * 5 + 10,animalList.get(i).getPosition().y * 5 + 10,5,5);
         }
+
         g.setColor(Color.GREEN);
         for(int i = -2; i<wMap.getWidth()+2;i++){
             for(int j = -2; j<wMap.getHeight()+2;j++){

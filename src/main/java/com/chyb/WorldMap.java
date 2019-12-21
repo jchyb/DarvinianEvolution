@@ -17,16 +17,16 @@ public class WorldMap {
     private ArrayList<Animal> animalList;
     private static Random random = new Random();
 
-    public WorldMap(int width, int height, int jungleWidth, int jungleHeight, int startEnergy, int moveEnergy, int plantEnergy){
-        this.width = width;
-        this.height = height;
-        this.jungleWidth = jungleWidth;
+    public WorldMap(WorldMapConfig config){
+        this.width = config.width;
+        this.height = config.height;
+        this.jungleWidth = (int)(config.width * Math.sqrt(config.jungleRatio));
         jungleX = (width-jungleWidth)/2;
-        this.jungleHeight = jungleHeight;
+        this.jungleWidth = (int)(config.height * Math.sqrt(config.jungleRatio));
         jungleY = (height-jungleHeight)/2;
-        this.startEnergy = startEnergy;
-        this.moveEnergy = moveEnergy;
-        this.plantEnergy = plantEnergy;
+        this.startEnergy = config.startEnergy;
+        this.moveEnergy = config.moveEnergy;
+        this.plantEnergy = config.plantEnergy;
         animalList = new ArrayList<Animal>();
         animalMap = new HashMap<Vector2D, LinkedList<Animal> >();
         plantMap = new HashMap<Vector2D, Plant>();
@@ -99,13 +99,13 @@ public class WorldMap {
         if(parent2.getEnergy()<startEnergy/2) return null;
         int childEnergy;
         childEnergy = parent1.popQuarterEnergy();
-        childEnergy = parent2.popQuarterEnergy();
+        childEnergy += parent2.popQuarterEnergy();
 
         ArrayList<Vector2D> openSpaces = new ArrayList<Vector2D>();
 
         for(int i=-1; i<=1; i++){
             for(int j=-1; j<=1; j++){
-                Vector2D newPosition = centralPosition.add(new Vector2D(i, j));
+                Vector2D newPosition = centralPosition.add(new Vector2D(i, j)).mod(getSize());
                 if(!isOccupiedByAnimal(centralPosition.add(new Vector2D(i, j)))){
                     openSpaces.add(newPosition);
                 }
@@ -115,6 +115,7 @@ public class WorldMap {
         Vector2D childPosition = openSpaces.get(random.nextInt(openSpaces.size()) );
 
         Animal animal = new Animal(childPosition, parent1, parent2, this);
+        animal.addEnergy(childEnergy);
         return animal;
     }
     public void eatPlants(){
@@ -137,7 +138,7 @@ public class WorldMap {
             }
             if(bestEnergy>0) {
                 for (Animal animal : bestAnimals) {
-                    animal.addEnergy((int) Main.plantEnergy / bestAnimals.size());
+                    animal.addEnergy((int) plantEnergy / bestAnimals.size());
                 }
             }
         }
@@ -158,17 +159,18 @@ public class WorldMap {
                 }
             }
         }
-
         for(Animal child : animalsToAdd){
+            System.out.print("pre"+animalList.size());
             animalList.add(child);
             if(!animalMap.containsKey(child.getPosition())) {
                 animalMap.put(child.getPosition(), new LinkedList<Animal>());
             }
             animalMap.get(child.getPosition()).add(child);
+            System.out.print("aft"+animalList.size());
         }
-        System.out.print("after"+animalList.size());
     }
     public void cycle(){
+        System.out.print("first" + animalList.size());
         for(int i=0;i<animalList.size();i++){
             Animal animal = animalList.get(i);
             if(animal.getEnergy() <= 0){
@@ -178,7 +180,7 @@ public class WorldMap {
                 i--;
                 continue;
             }
-            animal.move();
+            animal.move(moveEnergy);
         }
         eatPlants();
         handleBirths();
@@ -217,5 +219,9 @@ public class WorldMap {
 
     public int getHeight(){
         return height;
+    }
+
+    public int getPlantsAmount() {
+        return plantMap.size();
     }
 }

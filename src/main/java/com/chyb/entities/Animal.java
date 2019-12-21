@@ -27,9 +27,9 @@ public class Animal implements Comparable<Animal> {
         this.wMap = wMap;
         direction = MapDirection.N.rotateByValue(random.nextInt(8));
         genome = new AnimalGenome(parent1.getGenome(), parent2.getGenome());
-
+        stamina = 0;
     }
-    public void move(){
+    public void move(int moveEnergy){
         direction = (direction.rotateByValue(genome.getRandomGenomeValue()));
 
         Vector2D target = direction.unitVector.copy();
@@ -39,8 +39,7 @@ public class Animal implements Comparable<Animal> {
         position = position.mod(wMap.getSize());
         wMap.animalMoved(this, oldPosition, position);
 
-        stamina--;
-
+        stamina -= moveEnergy;
     }
 
     public Vector2D getPosition(){
@@ -53,6 +52,10 @@ public class Animal implements Comparable<Animal> {
 
     public int getEnergy() {
         return stamina;
+    }
+
+    public MapDirection getMapDirection(){
+        return direction;
     }
 
     @Override
