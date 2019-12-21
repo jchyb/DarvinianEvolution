@@ -27,10 +27,9 @@ public class Main {
         WorldMap wMap = new WorldMap(config);
         wMap.generateStartingAnimals(config.animalAmount);
 
+        StatisticsTracker statisticsTracker = new StatisticsTracker(wMap);
+
         WorldDraw wd = new WorldDraw(wMap);
-        initGraphics(wMap, wd);
-
-
 
         final JPanel gui = new JPanel(new BorderLayout(10,10));
 
@@ -61,7 +60,7 @@ public class Main {
         stats.add(new JLabel("Number of Plants: "));
         stats.add(new JLabel("Energy Average: "));
 
-        slider.setBorder(new TitledBorder("Simulation Speed "));
+        slider.setBorder(new TitledBorder("Simulation Time Step"));
         int[] stopTime = {200};
 
         slider.addChangeListener(new ChangeListener() {
@@ -93,12 +92,11 @@ public class Main {
         f.setVisible(true);
 
         while(true){
+            while(!wd.redrawn)Thread.sleep(1);
             if(!isStopped[0]) wMap.cycle();
-            f.repaint();
+            wd.redrawn = false;
+            wd.repaint();
             Thread.sleep(stopTime[0]);
         }
-    }
-    private static void initGraphics(WorldMap wMap, WorldDraw wd) {
-
     }
 }

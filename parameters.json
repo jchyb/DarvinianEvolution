@@ -4,6 +4,6 @@
   "startEnergy": 250,
   "moveEnergy" : 1,
   "plantEnergy" : 50,
-  "jungleRatio" : 0.2,
+  "jungleRatio" : 0.1,
   "animalAmount" : 1500
 }

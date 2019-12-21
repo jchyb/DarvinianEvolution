@@ -10,8 +10,8 @@ public class WorldMap {
 
     private final int startEnergy, moveEnergy, plantEnergy;
     private final int jungleX, jungleY;
-    private int width, height;
-    private int jungleWidth, jungleHeight;
+    private final int width, height;
+    private final int jungleWidth, jungleHeight;
     private HashMap<Vector2D, LinkedList<Animal> > animalMap;
     private HashMap<Vector2D, Plant> plantMap;
     private ArrayList<Animal> animalList;
@@ -20,9 +20,9 @@ public class WorldMap {
     public WorldMap(WorldMapConfig config){
         this.width = config.width;
         this.height = config.height;
-        this.jungleWidth = (int)(config.width * Math.sqrt(config.jungleRatio));
+        this.jungleWidth = (int)((double)config.width * Math.sqrt(config.jungleRatio));
         jungleX = (width-jungleWidth)/2;
-        this.jungleWidth = (int)(config.height * Math.sqrt(config.jungleRatio));
+        this.jungleHeight = (int)((double)config.height * Math.sqrt(config.jungleRatio));
         jungleY = (height-jungleHeight)/2;
         this.startEnergy = config.startEnergy;
         this.moveEnergy = config.moveEnergy;
@@ -30,7 +30,6 @@ public class WorldMap {
         animalList = new ArrayList<Animal>();
         animalMap = new HashMap<Vector2D, LinkedList<Animal> >();
         plantMap = new HashMap<Vector2D, Plant>();
-
     }
     public void generateStartingAnimals(int amount){
         for(int i = 0; i < amount; i++){
@@ -78,6 +77,7 @@ public class WorldMap {
 
             //TODO refactor
             //jungleAdd
+
             foundSpot = false;
             missedAmount = 0;
             while(!foundSpot && missedAmount < jungleWidth*jungleHeight) {
@@ -154,23 +154,19 @@ public class WorldMap {
                 Collections.sort(animalLl);
                 Animal child = addChild(animalPosition, animalLl.get(0), animalLl.get(1));
                 if(child != null){
-                    System.out.println("child");
                     animalsToAdd.add(child);
                 }
             }
         }
         for(Animal child : animalsToAdd){
-            System.out.print("pre"+animalList.size());
             animalList.add(child);
             if(!animalMap.containsKey(child.getPosition())) {
                 animalMap.put(child.getPosition(), new LinkedList<Animal>());
             }
             animalMap.get(child.getPosition()).add(child);
-            System.out.print("aft"+animalList.size());
         }
     }
     public void cycle(){
-        System.out.print("first" + animalList.size());
         for(int i=0;i<animalList.size();i++){
             Animal animal = animalList.get(i);
             if(animal.getEnergy() <= 0){
@@ -187,11 +183,6 @@ public class WorldMap {
         addPlants(1);
     }
 
-    private boolean isOccupiedByAnimal(Vector2D position){
-        if(! animalMap.containsKey(position)) return false;
-        else return !animalMap.get(position).isEmpty();
-    }
-
     public void animalMoved(Animal animal, Vector2D oldPosition, Vector2D newPosition) {
         //remove from oldPosition
         LinkedList<Animal> animalLl = animalMap.get(oldPosition);
@@ -203,6 +194,10 @@ public class WorldMap {
         }else{
             animalMap.put(newPosition, new LinkedList<Animal>(Collections.singleton(animal)));
         }
+    }
+    private boolean isOccupiedByAnimal(Vector2D position){
+        if(! animalMap.containsKey(position)) return false;
+        else return !animalMap.get(position).isEmpty();
     }
 
     public Vector2D getSize() {
