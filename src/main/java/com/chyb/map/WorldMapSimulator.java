@@ -1,7 +1,8 @@
-package com.chyb;
+package com.chyb.map;
 
 import com.chyb.entities.Animal;
 import com.chyb.entities.Plant;
+import com.chyb.map.WorldMapConfig;
 import com.chyb.utils.Vector2D;
 
 import java.util.*;
@@ -32,7 +33,7 @@ public class WorldMapSimulator {
         plantMap = new HashMap<>();
         generateStartingAnimals(config.animalAmount);
     }
-    public void generateStartingAnimals(int amount){
+    private void generateStartingAnimals(int amount){
         for(int i = 0; i < amount; i++){
             while(true){
                 Vector2D newPosition = new Vector2D(random.nextInt()% width, random.nextInt() % height);

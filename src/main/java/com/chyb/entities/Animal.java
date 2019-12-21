@@ -1,6 +1,6 @@
 package com.chyb.entities;
 
-import com.chyb.WorldMapSimulator;
+import com.chyb.map.WorldMapSimulator;
 import com.chyb.utils.MapDirection;
 import com.chyb.utils.Vector2D;
 

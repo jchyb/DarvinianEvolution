@@ -1,6 +1,6 @@
 package com.chyb.ui;
 
-import com.chyb.WorldMapSimulator;
+import com.chyb.map.WorldMapSimulator;
 import com.chyb.entities.Animal;
 
 public class StatisticsTracker {

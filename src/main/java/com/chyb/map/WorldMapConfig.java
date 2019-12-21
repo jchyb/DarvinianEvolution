@@ -1,4 +1,4 @@
-package com.chyb;
+package com.chyb.map;
 
 public class WorldMapConfig {
     public int width = 100, height=30;

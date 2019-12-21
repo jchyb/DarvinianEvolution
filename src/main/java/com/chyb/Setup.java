@@ -1,4 +1,6 @@
 package com.chyb;
+import com.chyb.map.WorldMapConfig;
+import com.chyb.map.WorldMapSimulator;
 import com.chyb.ui.StatisticsTracker;
 import com.chyb.ui.WorldDraw;
 import com.google.gson.Gson;
