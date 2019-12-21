@@ -30,6 +30,7 @@ public class WorldMapSimulator {
         animalList = new ArrayList<>();
         animalMap = new HashMap<>();
         plantMap = new HashMap<>();
+        generateStartingAnimals(config.animalAmount);
     }
     public void generateStartingAnimals(int amount){
         for(int i = 0; i < amount; i++){
@@ -52,7 +53,7 @@ public class WorldMapSimulator {
             int randomX=0, randomY=0;
             int missedAmount = 0;
 
-            while(!foundSpot && missedAmount < width * height) {
+            while(!foundSpot && missedAmount < width*height) {
                 int randomInt = random.nextInt(width*height - jungleWidth*jungleHeight);
                 Vector2D randomVector;
 
@@ -73,8 +74,22 @@ public class WorldMapSimulator {
                 missedAmount++;
                 if(foundSpot) plantMap.put(randomVector.copy(), new Plant(randomVector.copy()));
             }
+            if(!foundSpot){
+                for(int x = 0; x < width; x++){
+                    for(int y=0; y < height; y++){
+                        Vector2D randomVector = new Vector2D(x, y);
+                        if(!isOccupiedByAnimal(randomVector) && !isOccupiedByPlant(randomVector)
+                                && !inJungle(randomVector)) foundSpot = true;
+                        if(foundSpot){
+                            plantMap.put(randomVector.copy(), new Plant(randomVector.copy()));
+                            break;
+                        }
+                    }
+                    if(foundSpot) break;
+                }
+            }
 
-            //jungleAdd
+            //jungle zone
             foundSpot = false;
             missedAmount = 0;
             while(!foundSpot && missedAmount < jungleWidth*jungleHeight) {
@@ -85,6 +100,19 @@ public class WorldMapSimulator {
                 missedAmount++;
             }
             if(foundSpot) plantMap.put(new Vector2D(randomX, randomY), new Plant(new Vector2D(randomX,randomY)));
+            else{
+                for(int x = jungleX; x < jungleX+jungleWidth; x++){
+                    for(int y = jungleY; y<jungleY+jungleHeight; y++){
+                        Vector2D randomVector = new Vector2D(x,y);
+                        if(!isOccupiedByAnimal(randomVector) && !isOccupiedByPlant(randomVector)){
+                            plantMap.put(randomVector, new Plant(randomVector.copy()));
+                            foundSpot = true;
+                            break;
+                        }
+                    }
+                    if(foundSpot) break;
+                }
+            }
         }
     }
 
@@ -129,7 +157,7 @@ public class WorldMapSimulator {
         }
         Vector2D childPosition;
         if(openSpaces.isEmpty()){
-            childPosition = new Vector2D(random.nextInt(),random.nextInt());
+            childPosition = new Vector2D(random.nextInt(3)-1,random.nextInt(3)-1);
         }
         else{
             childPosition = openSpaces.get(random.nextInt(openSpaces.size()) );
@@ -188,6 +216,12 @@ public class WorldMapSimulator {
         }else{
             animalMap.put(newPosition, new LinkedList<Animal>(Collections.singleton(animal)));
         }
+    }
+
+    private boolean inJungle(Vector2D position) {
+        if(position.x>=jungleX && position.y>=jungleY
+                && position.x<jungleX+jungleWidth && position.y<jungleY+jungleHeight) return true;
+        return false;
     }
     public boolean isOccupiedByAnimal(Vector2D position){
         if(! animalMap.containsKey(position)) return false;

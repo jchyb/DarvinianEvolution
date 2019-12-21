@@ -9,7 +9,7 @@ import java.awt.*;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class Main {
+public class Setup {
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -21,7 +21,6 @@ public class Main {
         }
 
         WorldMapSimulator wMap = new WorldMapSimulator(config);
-        wMap.generateStartingAnimals(config.animalAmount);
         StatisticsTracker statisticsTracker = new StatisticsTracker(wMap);
         WorldDraw wd = new WorldDraw(wMap);
 

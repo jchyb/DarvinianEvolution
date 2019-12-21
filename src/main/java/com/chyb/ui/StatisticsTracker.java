@@ -16,12 +16,6 @@ public class StatisticsTracker {
         deadAnimalsAmount = 0;
         sumOfAge = 0;
     }
-    public int getNumberOfAnimals(){
-        return wMap.getAnimalList().size();
-    }
-    public int getNumberOfPlants(){
-        return wMap.getPlantsAmount();
-    }
     private void recalculateEnergyAverage(){
         int energySum = 0;
         for(Animal animal : wMap.getAnimalList()){
@@ -62,7 +56,12 @@ public class StatisticsTracker {
     public float getAverageEnergy() {
         return energyAverage;
     }
-
+    public int getNumberOfAnimals(){
+        return wMap.getAnimalList().size();
+    }
+    public int getNumberOfPlants(){
+        return wMap.getPlantsAmount();
+    }
     public float getAverageAge() {
         return averageAge;
     }

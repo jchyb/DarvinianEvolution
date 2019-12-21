@@ -1,5 +1,6 @@
 package com.chyb.entities;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class AnimalGenome {
@@ -57,5 +58,4 @@ public class AnimalGenome {
     public int getRandomGenomeValue(){
         return genomeValues[random.nextInt(32)];
     }
-
 }
