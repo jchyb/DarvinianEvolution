@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class WorldDraw extends JPanel {
 
-    //redrawn is for thread control
+    //redrawn is used for thread synchronisation
     public boolean redrawn;
     private WorldMapSimulator wMap;
 
@@ -18,8 +18,8 @@ public class WorldDraw extends JPanel {
         this.wMap = wMap;
         redrawn = true;
         this.setPreferredSize(new Dimension(wMap.getWidth()*5 + 20,wMap.getHeight()*5 + 20));
-
     }
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         if(redrawn) return;
