@@ -1,6 +1,6 @@
 package com.chyb.entities;
 
-import com.chyb.WorldMap;
+import com.chyb.WorldMapSimulator;
 import com.chyb.utils.MapDirection;
 import com.chyb.utils.Vector2D;
 
@@ -9,25 +9,30 @@ import java.util.Random;
 public class Animal implements Comparable<Animal> {
 
     private static Random random = new Random();
-    private final WorldMap wMap;
+    private final WorldMapSimulator wMap;
     private AnimalGenome genome;
     private Vector2D position;
     private MapDirection direction;
-    private int stamina;
+    private int childrenNumber;
+    private int energy;
+    private int age;
 
-    public Animal(Vector2D position, WorldMap wMap, int startingStamina) {
-        this.position = new Vector2D(position.x, position.y);
-        stamina = startingStamina;
-        this.wMap = wMap;
-        direction = MapDirection.N.rotateByValue(random.nextInt(8));
+    public Animal(Vector2D position, WorldMapSimulator wMap, int startingStamina) {
+        this(position, wMap);
         genome = new AnimalGenome();
+        energy = startingStamina;
     }
-    public Animal(Vector2D position, Animal parent1, Animal parent2, WorldMap wMap){
+    public Animal(Vector2D position, Animal parent1, Animal parent2, WorldMapSimulator wMap){
+        this(position, wMap);
+        genome = new AnimalGenome(parent1.getGenome(), parent2.getGenome());
+        energy = parent1.popQuarterEnergy() + parent2.popQuarterEnergy();
+    }
+    private Animal(Vector2D position, WorldMapSimulator wMap){
         this.position = new Vector2D(position.x, position.y);
         this.wMap = wMap;
         direction = MapDirection.N.rotateByValue(random.nextInt(8));
-        genome = new AnimalGenome(parent1.getGenome(), parent2.getGenome());
-        stamina = 0;
+        childrenNumber = 0;
+        age = 0;
     }
     public void move(int moveEnergy){
         direction = (direction.rotateByValue(genome.getRandomGenomeValue()));
@@ -39,7 +44,8 @@ public class Animal implements Comparable<Animal> {
         position = position.mod(wMap.getSize());
         wMap.animalMoved(this, oldPosition, position);
 
-        stamina -= moveEnergy;
+        energy -= moveEnergy;
+        age++;
     }
 
     public Vector2D getPosition(){
@@ -51,7 +57,7 @@ public class Animal implements Comparable<Animal> {
     }
 
     public int getEnergy() {
-        return stamina;
+        return energy;
     }
 
     public MapDirection getMapDirection(){
@@ -64,12 +70,23 @@ public class Animal implements Comparable<Animal> {
     }
 
     public void addEnergy(int plantEnergy) {
-        stamina += plantEnergy;
+        energy += plantEnergy;
     }
 
-    public int popQuarterEnergy() {
-        int quarterEnergy = stamina/4;
-        stamina -= quarterEnergy;
+    private int popQuarterEnergy() {
+        int quarterEnergy = energy/4;
+        energy -= quarterEnergy;
         return quarterEnergy;
+    }
+    public void addedItsChild(){
+        childrenNumber++;
+    }
+
+    public int getChildrenNumber() {
+        return childrenNumber;
+    }
+
+    public int getAge() {
+        return age;
     }
 }

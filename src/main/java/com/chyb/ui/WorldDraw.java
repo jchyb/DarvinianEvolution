@@ -1,5 +1,6 @@
-package com.chyb;
+package com.chyb.ui;
 
+import com.chyb.WorldMapSimulator;
 import com.chyb.entities.Animal;
 import com.chyb.utils.Vector2D;
 
@@ -9,13 +10,15 @@ import java.util.ArrayList;
 
 public class WorldDraw extends JPanel {
 
+    //redrawn is for thread control
     public boolean redrawn;
+    private WorldMapSimulator wMap;
 
-    private WorldMap wMap;
-    public WorldDraw(WorldMap wMap){
+    public WorldDraw(WorldMapSimulator wMap){
+        this.wMap = wMap;
         redrawn = true;
         this.setPreferredSize(new Dimension(wMap.getWidth()*5 + 20,wMap.getHeight()*5 + 20));
-        this.wMap = wMap;
+
     }
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
